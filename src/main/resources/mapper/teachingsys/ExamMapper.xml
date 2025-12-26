@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.ExamMapper">
+    
+    <resultMap type="Exam" id="ExamResult">
+        <result property="id"    column="id"    />
+        <result property="assignmentId"    column="assignment_id"    />
+        <result property="shuffleQuestions"    column="shuffle_questions"    />
+        <result property="showCorrectAnswer"    column="show_correct_answer"    />
+        <result property="allowReview"    column="allow_review"    />
+        <result property="settings"    column="settings"    />
+    </resultMap>
+
+    <sql id="selectExamVo">
+        select id, assignment_id, shuffle_questions, show_correct_answer, allow_review, settings from exam
+    </sql>
+
+    <select id="selectExamList" parameterType="Exam" resultMap="ExamResult">
+        <include refid="selectExamVo"/>
+        <where>  
+            <if test="assignmentId != null "> and assignment_id = #{assignmentId}</if>
+            <if test="shuffleQuestions != null "> and shuffle_questions = #{shuffleQuestions}</if>
+            <if test="showCorrectAnswer != null "> and show_correct_answer = #{showCorrectAnswer}</if>
+            <if test="allowReview != null "> and allow_review = #{allowReview}</if>
+            <if test="settings != null  and settings != ''"> and settings = #{settings}</if>
+        </where>
+    </select>
+    
+    <select id="selectExamById" parameterType="Long" resultMap="ExamResult">
+        <include refid="selectExamVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExam" parameterType="Exam" useGeneratedKeys="true" keyProperty="id">
+        insert into exam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="assignmentId != null">assignment_id,</if>
+            <if test="shuffleQuestions != null">shuffle_questions,</if>
+            <if test="showCorrectAnswer != null">show_correct_answer,</if>
+            <if test="allowReview != null">allow_review,</if>
+            <if test="settings != null">settings,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="assignmentId != null">#{assignmentId},</if>
+            <if test="shuffleQuestions != null">#{shuffleQuestions},</if>
+            <if test="showCorrectAnswer != null">#{showCorrectAnswer},</if>
+            <if test="allowReview != null">#{allowReview},</if>
+            <if test="settings != null">#{settings},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExam" parameterType="Exam">
+        update exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="assignmentId != null">assignment_id = #{assignmentId},</if>
+            <if test="shuffleQuestions != null">shuffle_questions = #{shuffleQuestions},</if>
+            <if test="showCorrectAnswer != null">show_correct_answer = #{showCorrectAnswer},</if>
+            <if test="allowReview != null">allow_review = #{allowReview},</if>
+            <if test="settings != null">settings = #{settings},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExamById" parameterType="Long">
+        delete from exam where id = #{id}
+    </delete>
+
+    <delete id="deleteExamByIds" parameterType="String">
+        delete from exam where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

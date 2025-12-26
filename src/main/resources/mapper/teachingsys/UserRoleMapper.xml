@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.UserRoleMapper">
+    
+    <resultMap type="UserRole" id="UserRoleResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="createdTime"    column="created_time"    />
+    </resultMap>
+
+    <sql id="selectUserRoleVo">
+        select id, user_id, role_id, created_time from user_role
+    </sql>
+
+    <select id="selectUserRoleList" parameterType="UserRole" resultMap="UserRoleResult">
+        <include refid="selectUserRoleVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserRoleById" parameterType="Long" resultMap="UserRoleResult">
+        <include refid="selectUserRoleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserRole" parameterType="UserRole" useGeneratedKeys="true" keyProperty="id">
+        insert into user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="createdTime != null">created_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserRole" parameterType="UserRole">
+        update user_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserRoleById" parameterType="Long">
+        delete from user_role where id = #{id}
+    </delete>
+
+    <delete id="deleteUserRoleByIds" parameterType="String">
+        delete from user_role where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

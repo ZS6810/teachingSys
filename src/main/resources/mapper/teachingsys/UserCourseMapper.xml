@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.UserCourseMapper">
+    
+    <resultMap type="UserCourse" id="UserCourseResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="enrolledTime"    column="enrolled_time"    />
+        <result property="progressRate"    column="progress_rate"    />
+        <result property="completedChapters"    column="completed_chapters"    />
+        <result property="totalChapters"    column="total_chapters"    />
+        <result property="completedMaterials"    column="completed_materials"    />
+        <result property="totalMaterials"    column="total_materials"    />
+        <result property="progressUpdatedTime"    column="progress_updated_time"    />
+        <result property="lastAccessed"    column="last_accessed"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectUserCourseVo">
+        select id, user_id, course_id, enrolled_time, progress_rate, completed_chapters, total_chapters, completed_materials, total_materials, progress_updated_time, last_accessed, completion_time, status from user_course
+    </sql>
+
+    <select id="selectUserCourseList" parameterType="UserCourse" resultMap="UserCourseResult">
+        <include refid="selectUserCourseVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="enrolledTime != null "> and enrolled_time = #{enrolledTime}</if>
+            <if test="progressRate != null "> and progress_rate = #{progressRate}</if>
+            <if test="completedChapters != null "> and completed_chapters = #{completedChapters}</if>
+            <if test="totalChapters != null "> and total_chapters = #{totalChapters}</if>
+            <if test="completedMaterials != null "> and completed_materials = #{completedMaterials}</if>
+            <if test="totalMaterials != null "> and total_materials = #{totalMaterials}</if>
+            <if test="progressUpdatedTime != null "> and progress_updated_time = #{progressUpdatedTime}</if>
+            <if test="lastAccessed != null "> and last_accessed = #{lastAccessed}</if>
+            <if test="completionTime != null "> and completion_time = #{completionTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserCourseById" parameterType="Long" resultMap="UserCourseResult">
+        <include refid="selectUserCourseVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserCourse" parameterType="UserCourse" useGeneratedKeys="true" keyProperty="id">
+        insert into user_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="enrolledTime != null">enrolled_time,</if>
+            <if test="progressRate != null">progress_rate,</if>
+            <if test="completedChapters != null">completed_chapters,</if>
+            <if test="totalChapters != null">total_chapters,</if>
+            <if test="completedMaterials != null">completed_materials,</if>
+            <if test="totalMaterials != null">total_materials,</if>
+            <if test="progressUpdatedTime != null">progress_updated_time,</if>
+            <if test="lastAccessed != null">last_accessed,</if>
+            <if test="completionTime != null">completion_time,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="enrolledTime != null">#{enrolledTime},</if>
+            <if test="progressRate != null">#{progressRate},</if>
+            <if test="completedChapters != null">#{completedChapters},</if>
+            <if test="totalChapters != null">#{totalChapters},</if>
+            <if test="completedMaterials != null">#{completedMaterials},</if>
+            <if test="totalMaterials != null">#{totalMaterials},</if>
+            <if test="progressUpdatedTime != null">#{progressUpdatedTime},</if>
+            <if test="lastAccessed != null">#{lastAccessed},</if>
+            <if test="completionTime != null">#{completionTime},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserCourse" parameterType="UserCourse">
+        update user_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="enrolledTime != null">enrolled_time = #{enrolledTime},</if>
+            <if test="progressRate != null">progress_rate = #{progressRate},</if>
+            <if test="completedChapters != null">completed_chapters = #{completedChapters},</if>
+            <if test="totalChapters != null">total_chapters = #{totalChapters},</if>
+            <if test="completedMaterials != null">completed_materials = #{completedMaterials},</if>
+            <if test="totalMaterials != null">total_materials = #{totalMaterials},</if>
+            <if test="progressUpdatedTime != null">progress_updated_time = #{progressUpdatedTime},</if>
+            <if test="lastAccessed != null">last_accessed = #{lastAccessed},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserCourseById" parameterType="Long">
+        delete from user_course where id = #{id}
+    </delete>
+
+    <delete id="deleteUserCourseByIds" parameterType="String">
+        delete from user_course where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

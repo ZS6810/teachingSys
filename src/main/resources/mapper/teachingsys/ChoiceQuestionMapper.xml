@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.ChoiceQuestionMapper">
+    
+    <resultMap type="ChoiceQuestion" id="ChoiceQuestionResult">
+        <result property="id"    column="id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="optionA"    column="option_a"    />
+        <result property="optionB"    column="option_b"    />
+        <result property="optionC"    column="option_c"    />
+        <result property="optionD"    column="option_d"    />
+        <result property="optionE"    column="option_e"    />
+        <result property="optionF"    column="option_f"    />
+        <result property="correctAnswer"    column="correct_answer"    />
+        <result property="isMultiple"    column="is_multiple"    />
+    </resultMap>
+
+    <sql id="selectChoiceQuestionVo">
+        select id, question_id, option_a, option_b, option_c, option_d, option_e, option_f, correct_answer, is_multiple from choice_question
+    </sql>
+
+    <select id="selectChoiceQuestionList" parameterType="ChoiceQuestion" resultMap="ChoiceQuestionResult">
+        <include refid="selectChoiceQuestionVo"/>
+        <where>  
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="optionA != null  and optionA != ''"> and option_a = #{optionA}</if>
+            <if test="optionB != null  and optionB != ''"> and option_b = #{optionB}</if>
+            <if test="optionC != null  and optionC != ''"> and option_c = #{optionC}</if>
+            <if test="optionD != null  and optionD != ''"> and option_d = #{optionD}</if>
+            <if test="optionE != null  and optionE != ''"> and option_e = #{optionE}</if>
+            <if test="optionF != null  and optionF != ''"> and option_f = #{optionF}</if>
+            <if test="correctAnswer != null  and correctAnswer != ''"> and correct_answer = #{correctAnswer}</if>
+            <if test="isMultiple != null "> and is_multiple = #{isMultiple}</if>
+        </where>
+    </select>
+    
+    <select id="selectChoiceQuestionById" parameterType="Long" resultMap="ChoiceQuestionResult">
+        <include refid="selectChoiceQuestionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertChoiceQuestion" parameterType="ChoiceQuestion" useGeneratedKeys="true" keyProperty="id">
+        insert into choice_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="optionA != null">option_a,</if>
+            <if test="optionB != null">option_b,</if>
+            <if test="optionC != null">option_c,</if>
+            <if test="optionD != null">option_d,</if>
+            <if test="optionE != null">option_e,</if>
+            <if test="optionF != null">option_f,</if>
+            <if test="correctAnswer != null and correctAnswer != ''">correct_answer,</if>
+            <if test="isMultiple != null">is_multiple,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="optionA != null">#{optionA},</if>
+            <if test="optionB != null">#{optionB},</if>
+            <if test="optionC != null">#{optionC},</if>
+            <if test="optionD != null">#{optionD},</if>
+            <if test="optionE != null">#{optionE},</if>
+            <if test="optionF != null">#{optionF},</if>
+            <if test="correctAnswer != null and correctAnswer != ''">#{correctAnswer},</if>
+            <if test="isMultiple != null">#{isMultiple},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChoiceQuestion" parameterType="ChoiceQuestion">
+        update choice_question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="optionA != null">option_a = #{optionA},</if>
+            <if test="optionB != null">option_b = #{optionB},</if>
+            <if test="optionC != null">option_c = #{optionC},</if>
+            <if test="optionD != null">option_d = #{optionD},</if>
+            <if test="optionE != null">option_e = #{optionE},</if>
+            <if test="optionF != null">option_f = #{optionF},</if>
+            <if test="correctAnswer != null and correctAnswer != ''">correct_answer = #{correctAnswer},</if>
+            <if test="isMultiple != null">is_multiple = #{isMultiple},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChoiceQuestionById" parameterType="Long">
+        delete from choice_question where id = #{id}
+    </delete>
+
+    <delete id="deleteChoiceQuestionByIds" parameterType="String">
+        delete from choice_question where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

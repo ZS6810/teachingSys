@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.AssignmentMapper">
+    
+    <resultMap type="Assignment" id="AssignmentResult">
+        <result property="id"    column="id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="title"    column="title"    />
+        <result property="description"    column="description"    />
+        <result property="assignmentType"    column="assignment_type"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="deadline"    column="deadline"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="passingScore"    column="passing_score"    />
+        <result property="timeLimit"    column="time_limit"    />
+        <result property="maxAttempts"    column="max_attempts"    />
+        <result property="submissionCount"    column="submission_count"    />
+        <result property="gradedCount"    column="graded_count"    />
+        <result property="averageScore"    column="average_score"    />
+        <result property="highestScore"    column="highest_score"    />
+        <result property="lowestScore"    column="lowest_score"    />
+        <result property="statsUpdatedTime"    column="stats_updated_time"    />
+        <result property="status"    column="status"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="updatedTime"    column="updated_time"    />
+    </resultMap>
+
+    <sql id="selectAssignmentVo">
+        select id, course_id, title, description, assignment_type, start_time, deadline, total_score, passing_score, time_limit, max_attempts, submission_count, graded_count, average_score, highest_score, lowest_score, stats_updated_time, status, created_time, updated_time from assignment
+    </sql>
+
+    <select id="selectAssignmentList" parameterType="Assignment" resultMap="AssignmentResult">
+        <include refid="selectAssignmentVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="assignmentType != null  and assignmentType != ''"> and assignment_type = #{assignmentType}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="deadline != null "> and deadline = #{deadline}</if>
+            <if test="totalScore != null "> and total_score = #{totalScore}</if>
+            <if test="passingScore != null "> and passing_score = #{passingScore}</if>
+            <if test="timeLimit != null "> and time_limit = #{timeLimit}</if>
+            <if test="maxAttempts != null "> and max_attempts = #{maxAttempts}</if>
+            <if test="submissionCount != null "> and submission_count = #{submissionCount}</if>
+            <if test="gradedCount != null "> and graded_count = #{gradedCount}</if>
+            <if test="averageScore != null "> and average_score = #{averageScore}</if>
+            <if test="highestScore != null "> and highest_score = #{highestScore}</if>
+            <if test="lowestScore != null "> and lowest_score = #{lowestScore}</if>
+            <if test="statsUpdatedTime != null "> and stats_updated_time = #{statsUpdatedTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+            <if test="updatedTime != null "> and updated_time = #{updatedTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectAssignmentById" parameterType="Long" resultMap="AssignmentResult">
+        <include refid="selectAssignmentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAssignment" parameterType="Assignment" useGeneratedKeys="true" keyProperty="id">
+        insert into assignment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="description != null">description,</if>
+            <if test="assignmentType != null and assignmentType != ''">assignment_type,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="deadline != null">deadline,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="passingScore != null">passing_score,</if>
+            <if test="timeLimit != null">time_limit,</if>
+            <if test="maxAttempts != null">max_attempts,</if>
+            <if test="submissionCount != null">submission_count,</if>
+            <if test="gradedCount != null">graded_count,</if>
+            <if test="averageScore != null">average_score,</if>
+            <if test="highestScore != null">highest_score,</if>
+            <if test="lowestScore != null">lowest_score,</if>
+            <if test="statsUpdatedTime != null">stats_updated_time,</if>
+            <if test="status != null">status,</if>
+            <if test="createdTime != null">created_time,</if>
+            <if test="updatedTime != null">updated_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="description != null">#{description},</if>
+            <if test="assignmentType != null and assignmentType != ''">#{assignmentType},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="deadline != null">#{deadline},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="passingScore != null">#{passingScore},</if>
+            <if test="timeLimit != null">#{timeLimit},</if>
+            <if test="maxAttempts != null">#{maxAttempts},</if>
+            <if test="submissionCount != null">#{submissionCount},</if>
+            <if test="gradedCount != null">#{gradedCount},</if>
+            <if test="averageScore != null">#{averageScore},</if>
+            <if test="highestScore != null">#{highestScore},</if>
+            <if test="lowestScore != null">#{lowestScore},</if>
+            <if test="statsUpdatedTime != null">#{statsUpdatedTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAssignment" parameterType="Assignment">
+        update assignment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="assignmentType != null and assignmentType != ''">assignment_type = #{assignmentType},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="deadline != null">deadline = #{deadline},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="passingScore != null">passing_score = #{passingScore},</if>
+            <if test="timeLimit != null">time_limit = #{timeLimit},</if>
+            <if test="maxAttempts != null">max_attempts = #{maxAttempts},</if>
+            <if test="submissionCount != null">submission_count = #{submissionCount},</if>
+            <if test="gradedCount != null">graded_count = #{gradedCount},</if>
+            <if test="averageScore != null">average_score = #{averageScore},</if>
+            <if test="highestScore != null">highest_score = #{highestScore},</if>
+            <if test="lowestScore != null">lowest_score = #{lowestScore},</if>
+            <if test="statsUpdatedTime != null">stats_updated_time = #{statsUpdatedTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updatedTime != null">updated_time = #{updatedTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAssignmentById" parameterType="Long">
+        delete from assignment where id = #{id}
+    </delete>
+
+    <delete id="deleteAssignmentByIds" parameterType="String">
+        delete from assignment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teach.teachingsys.mapper.LearningprogressMapper">
+    
+    <resultMap type="Learningprogress" id="LearningprogressResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="chapterId"    column="chapter_id"    />
+        <result property="chapterName"    column="chapter_name"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialType"    column="material_type"    />
+        <result property="progressType"    column="progress_type"    />
+        <result property="status"    column="status"    />
+        <result property="completionPercentage"    column="completion_percentage"    />
+        <result property="videoWatchTime"    column="video_watch_time"    />
+        <result property="totalVideoTime"    column="total_video_time"    />
+        <result property="lastStudiedTime"    column="last_studied_time"    />
+        <result property="completedTime"    column="completed_time"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectLearningprogressVo">
+        select id, user_id, course_id, course_name, chapter_id, chapter_name, material_id, material_name, material_type, progress_type, status, completion_percentage, video_watch_time, total_video_time, last_studied_time, completed_time, notes from learningprogress
+    </sql>
+
+    <select id="selectLearningprogressList" parameterType="Learningprogress" resultMap="LearningprogressResult">
+        <include refid="selectLearningprogressVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="chapterId != null "> and chapter_id = #{chapterId}</if>
+            <if test="chapterName != null  and chapterName != ''"> and chapter_name like concat('%', #{chapterName}, '%')</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialType != null  and materialType != ''"> and material_type = #{materialType}</if>
+            <if test="progressType != null  and progressType != ''"> and progress_type = #{progressType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="completionPercentage != null "> and completion_percentage = #{completionPercentage}</if>
+            <if test="videoWatchTime != null "> and video_watch_time = #{videoWatchTime}</if>
+            <if test="totalVideoTime != null "> and total_video_time = #{totalVideoTime}</if>
+            <if test="lastStudiedTime != null "> and last_studied_time = #{lastStudiedTime}</if>
+            <if test="completedTime != null "> and completed_time = #{completedTime}</if>
+            <if test="notes != null  and notes != ''"> and notes = #{notes}</if>
+        </where>
+    </select>
+    
+    <select id="selectLearningprogressById" parameterType="Long" resultMap="LearningprogressResult">
+        <include refid="selectLearningprogressVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertLearningprogress" parameterType="Learningprogress" useGeneratedKeys="true" keyProperty="id">
+        insert into learningprogress
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="courseName != null">course_name,</if>
+            <if test="chapterId != null">chapter_id,</if>
+            <if test="chapterName != null">chapter_name,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="materialType != null">material_type,</if>
+            <if test="progressType != null and progressType != ''">progress_type,</if>
+            <if test="status != null">status,</if>
+            <if test="completionPercentage != null">completion_percentage,</if>
+            <if test="videoWatchTime != null">video_watch_time,</if>
+            <if test="totalVideoTime != null">total_video_time,</if>
+            <if test="lastStudiedTime != null">last_studied_time,</if>
+            <if test="completedTime != null">completed_time,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="courseName != null">#{courseName},</if>
+            <if test="chapterId != null">#{chapterId},</if>
+            <if test="chapterName != null">#{chapterName},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="materialType != null">#{materialType},</if>
+            <if test="progressType != null and progressType != ''">#{progressType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="completionPercentage != null">#{completionPercentage},</if>
+            <if test="videoWatchTime != null">#{videoWatchTime},</if>
+            <if test="totalVideoTime != null">#{totalVideoTime},</if>
+            <if test="lastStudiedTime != null">#{lastStudiedTime},</if>
+            <if test="completedTime != null">#{completedTime},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLearningprogress" parameterType="Learningprogress">
+        update learningprogress
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="courseName != null">course_name = #{courseName},</if>
+            <if test="chapterId != null">chapter_id = #{chapterId},</if>
+            <if test="chapterName != null">chapter_name = #{chapterName},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="progressType != null and progressType != ''">progress_type = #{progressType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="completionPercentage != null">completion_percentage = #{completionPercentage},</if>
+            <if test="videoWatchTime != null">video_watch_time = #{videoWatchTime},</if>
+            <if test="totalVideoTime != null">total_video_time = #{totalVideoTime},</if>
+            <if test="lastStudiedTime != null">last_studied_time = #{lastStudiedTime},</if>
+            <if test="completedTime != null">completed_time = #{completedTime},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLearningprogressById" parameterType="Long">
+        delete from learningprogress where id = #{id}
+    </delete>
+
+    <delete id="deleteLearningprogressByIds" parameterType="String">
+        delete from learningprogress where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
