@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.QuestionEnums.Difficulty;
 import com.teach.teachingsys.entity.enums.QuestionEnums.QuestionType;
 import jakarta.persistence.Column;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "questionbank")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class QuestionBank {
 
     @Id

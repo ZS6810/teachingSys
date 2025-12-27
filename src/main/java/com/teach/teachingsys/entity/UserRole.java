@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
         @Index(name = "idx_user_role_user", columnList = "user_id"),
         @Index(name = "role_id", columnList = "role_id")
     })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserRole {
 
     @Id

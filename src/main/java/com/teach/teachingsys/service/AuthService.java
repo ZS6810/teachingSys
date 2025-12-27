@@ -129,5 +129,16 @@ public class AuthService {
                 .roles(roles)
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public User getUserById(Long userId) {
+        // 1. 从数据库查询用户实体
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
+
+        // 2. 调用你已有的私有方法构建 AuthResponse
+        // 该方法会自动处理 roles 列表的查询和字段映射
+        return user;
+    }
 }
 

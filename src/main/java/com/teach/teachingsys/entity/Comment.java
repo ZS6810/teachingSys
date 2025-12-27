@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.ForumEnums.CommentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @Table(name = "comment", uniqueConstraints = {
         @UniqueConstraint(columnNames = "id", name = "PRIMARY")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Comment {
 
     @Id

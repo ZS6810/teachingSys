@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.ForumEnums.PostStatus;
 import com.teach.teachingsys.entity.enums.ForumEnums.PostType;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "post")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
     @Id

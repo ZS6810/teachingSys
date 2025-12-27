@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.ProgressEnums.LearningStatus;
 import com.teach.teachingsys.entity.enums.ProgressEnums.ProgressType;
 import jakarta.persistence.Column;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"user_id", "chapter_id"}, name = "uk_user_chapter"),
         @UniqueConstraint(columnNames = {"user_id", "material_id"}, name = "uk_user_material")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LearningProgress {
 
     @Id

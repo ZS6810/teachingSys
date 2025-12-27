@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "user_course", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "course_id"}, name = "uk_user_course")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserCourse {
 
     public enum CourseStudyStatus {

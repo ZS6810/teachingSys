@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "chapter")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Chapter {
 
     @Id

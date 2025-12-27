@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 @Table(name = "assignment_submission", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"assignment_id", "user_id", "attempt_number"}, name = "uk_assignment_user_attempt")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AssignmentSubmission {
 
     public enum SubmissionStatus {

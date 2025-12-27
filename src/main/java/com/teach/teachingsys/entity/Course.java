@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseLevel;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseStatus;
 import jakarta.persistence.Column;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "course")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Course {
 
     @Id

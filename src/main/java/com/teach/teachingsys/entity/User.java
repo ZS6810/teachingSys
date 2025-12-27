@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.teach.teachingsys.entity.enums.UserEnums.UserStatus;
 import com.teach.teachingsys.entity.enums.UserEnums.UserType;
 import jakarta.persistence.Column;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = "username", name = "username"),
         @UniqueConstraint(columnNames = "email", name = "email")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id

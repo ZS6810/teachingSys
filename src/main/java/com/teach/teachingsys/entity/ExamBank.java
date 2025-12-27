@@ -1,5 +1,6 @@
 package com.teach.teachingsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -17,6 +18,7 @@ import lombok.Data;
 @Table(name = "exam_bank", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"exam_id", "question_id"}, name = "uk_exam_question")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ExamBank {
 
     @Id
