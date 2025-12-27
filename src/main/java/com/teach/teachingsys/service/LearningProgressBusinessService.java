@@ -5,12 +5,14 @@ import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.CourseMaterial;
 import com.teach.teachingsys.entity.LearningProgress;
 import com.teach.teachingsys.entity.User;
+import com.teach.teachingsys.entity.UserCourse;
 import com.teach.teachingsys.entity.enums.ProgressEnums.LearningStatus;
 import com.teach.teachingsys.entity.enums.ProgressEnums.ProgressType;
 import com.teach.teachingsys.repository.ChapterRepository;
 import com.teach.teachingsys.repository.CourseMaterialRepository;
 import com.teach.teachingsys.repository.CourseRepository;
 import com.teach.teachingsys.repository.LearningProgressRepository;
+import com.teach.teachingsys.repository.UserCourseRepository;
 import com.teach.teachingsys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ public class LearningProgressBusinessService {
     private final CourseRepository courseRepository;
     private final ChapterRepository chapterRepository;
     private final CourseMaterialRepository courseMaterialRepository;
+    private final UserCourseRepository userCourseRepository;
 
     /**
      * 更新章节学习进度
@@ -71,7 +74,9 @@ public class LearningProgressBusinessService {
             progress.setStatus(LearningStatus.in_progress);
         }
         
-        return learningProgressRepository.save(progress);
+        LearningProgress savedProgress = learningProgressRepository.save(progress);
+        updateCourseProgress(userId, courseId);
+        return savedProgress;
     }
 
     /**
@@ -117,7 +122,9 @@ public class LearningProgressBusinessService {
             }
         }
         
-        return learningProgressRepository.save(progress);
+        LearningProgress savedProgress = learningProgressRepository.save(progress);
+        updateCourseProgress(userId, courseId);
+        return savedProgress;
     }
 
     /**
@@ -132,6 +139,27 @@ public class LearningProgressBusinessService {
                     .toList();
         }
         return learningProgressRepository.findByUserId(userId);
+    }
+
+    private void updateCourseProgress(Long userId, Long courseId) {
+        // 1. 获取课程资料总数
+        long totalMaterials = courseMaterialRepository.countByChapter_Course_Id(courseId);
+
+        // 2. 获取用户已完成的资料数 (状态为 completed)
+        long completedMaterials = learningProgressRepository.countByUserIdAndCourseIdAndStatusAndProgressType(
+                userId, courseId, LearningStatus.completed, ProgressType.material);
+
+        // 3. 计算进度 (0.0 - 1.0)
+        BigDecimal progressRate = totalMaterials == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(completedMaterials)
+                .divide(BigDecimal.valueOf(totalMaterials), 2, RoundingMode.HALF_UP);
+
+        // 4. 更新 UserCourse 表
+        userCourseRepository.findByUserIdAndCourseId(userId, courseId).ifPresent(userCourse -> {
+            userCourse.setProgressRate(progressRate);
+            userCourse.setCompletedMaterials((int) completedMaterials);
+            userCourse.setTotalMaterials((int) totalMaterials);
+            userCourseRepository.save(userCourse);
+        });
     }
 }
 

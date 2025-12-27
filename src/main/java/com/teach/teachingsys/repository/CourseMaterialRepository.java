@@ -12,5 +12,7 @@ import java.util.List;
 public interface CourseMaterialRepository extends JpaRepository<CourseMaterial, Long> {
     @Query("SELECT cm FROM CourseMaterial cm WHERE cm.chapter.id = :chapterId")
     List<CourseMaterial> findByChapterId(@Param("chapterId") Long chapterId);
+
+    long countByChapter_Course_Id(Long courseId);
 }
 

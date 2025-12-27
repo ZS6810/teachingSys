@@ -1,6 +1,8 @@
 package com.teach.teachingsys.repository;
 
 import com.teach.teachingsys.entity.LearningProgress;
+import com.teach.teachingsys.entity.enums.ProgressEnums.LearningStatus;
+import com.teach.teachingsys.entity.enums.ProgressEnums.ProgressType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +24,7 @@ public interface LearningProgressRepository extends JpaRepository<LearningProgre
     
     @Query("SELECT lp FROM LearningProgress lp WHERE lp.user.id = :userId AND lp.material.id = :materialId")
     Optional<LearningProgress> findByUserIdAndMaterialId(@Param("userId") Long userId, @Param("materialId") Long materialId);
+
+    long countByUserIdAndCourseIdAndStatusAndProgressType(Long userId, Long courseId, LearningStatus status, ProgressType progressType);
 }
 
