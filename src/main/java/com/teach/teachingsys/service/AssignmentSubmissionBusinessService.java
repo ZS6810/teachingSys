@@ -1,18 +1,31 @@
 package com.teach.teachingsys.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teach.teachingsys.dto.QuestionDetailResponse;
+import com.teach.teachingsys.dto.SubmissionDetailResponse;
 import com.teach.teachingsys.entity.Assignment;
+import com.teach.teachingsys.entity.AssignmentBank;
 import com.teach.teachingsys.entity.AssignmentSubmission;
+import com.teach.teachingsys.entity.QuestionBank;
 import com.teach.teachingsys.entity.User;
 import com.teach.teachingsys.entity.enums.AssignmentEnums.AssignmentStatus;
+import com.teach.teachingsys.entity.enums.QuestionEnums.QuestionType;
+import com.teach.teachingsys.repository.AssignmentBankRepository;
 import com.teach.teachingsys.repository.AssignmentRepository;
 import com.teach.teachingsys.repository.AssignmentSubmissionRepository;
+import com.teach.teachingsys.repository.ChoiceQuestionRepository;
+import com.teach.teachingsys.repository.ShortAnswerQuestionRepository;
 import com.teach.teachingsys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 作业提交业务服务
@@ -26,6 +39,10 @@ public class AssignmentSubmissionBusinessService {
     private final AssignmentSubmissionRepository submissionRepository;
     private final AssignmentRepository assignmentRepository;
     private final UserRepository userRepository;
+    private final AssignmentBankRepository assignmentBankRepository;
+    private final ChoiceQuestionRepository choiceQuestionRepository;
+    private final ShortAnswerQuestionRepository shortAnswerQuestionRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 提交作业
@@ -153,5 +170,77 @@ public class AssignmentSubmissionBusinessService {
     public List<AssignmentSubmission> getAssignmentSubmissions(Long assignmentId) {
         return submissionRepository.findByAssignmentId(assignmentId);
     }
-}
 
+    /**
+     * 获取作业提交详情（包含题目和学生答案）
+     */
+    @Transactional(readOnly = true)
+    public SubmissionDetailResponse getSubmissionDetail(Long submissionId) {
+        AssignmentSubmission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() -> new RuntimeException("提交记录不存在"));
+
+        // 解析学生答案
+        Map<String, String> answersMap;
+        try {
+            if (submission.getSubmissionData() != null && !submission.getSubmissionData().isEmpty()) {
+                answersMap = objectMapper.readValue(submission.getSubmissionData(), new TypeReference<Map<String, String>>() {});
+            } else {
+                answersMap = Collections.emptyMap();
+            }
+        } catch (Exception e) {
+            answersMap = Collections.emptyMap();
+            // 在实际生产中应该记录日志
+            System.err.println("解析提交数据失败: " + e.getMessage());
+        }
+
+        List<AssignmentBank> assignmentBanks = assignmentBankRepository.findByAssignmentId(submission.getAssignment().getId());
+        List<QuestionDetailResponse> questionDetails = new ArrayList<>();
+
+        for (AssignmentBank bank : assignmentBanks) {
+            QuestionBank q = bank.getQuestion();
+            QuestionDetailResponse dto = QuestionDetailResponse.builder()
+                    .questionId(q.getId())
+                    .questionText(q.getQuestionText())
+                    .questionType(q.getQuestionType())
+                    .score(q.getScore())
+                    .explanation(q.getExplanation())
+                    .build();
+
+            // 设置学生答案 (假设submissionData的key是题目ID的字符串形式)
+            dto.setStudentAnswer(answersMap.get(String.valueOf(q.getId())));
+
+            // 获取具体题目详情
+            if (q.getQuestionType() == QuestionType.choice) {
+                choiceQuestionRepository.findByQuestionId(q.getId()).ifPresent(cq -> {
+                    dto.setOptionA(cq.getOptionA());
+                    dto.setOptionB(cq.getOptionB());
+                    dto.setOptionC(cq.getOptionC());
+                    dto.setOptionD(cq.getOptionD());
+                    dto.setOptionE(cq.getOptionE());
+                    dto.setOptionF(cq.getOptionF());
+                    dto.setIsMultiple(cq.getIsMultiple());
+                    dto.setCorrectAnswer(cq.getCorrectAnswer());
+                });
+            } else if (q.getQuestionType() == QuestionType.short_answer) {
+                shortAnswerQuestionRepository.findByQuestionId(q.getId()).ifPresent(saq -> {
+                    dto.setCorrectAnswer(saq.getReferenceAnswer());
+                });
+            }
+
+            questionDetails.add(dto);
+        }
+
+        return SubmissionDetailResponse.builder()
+                .submissionId(submission.getId())
+                .assignmentId(submission.getAssignment().getId())
+                .assignmentTitle(submission.getAssignment().getTitle())
+                .studentId(submission.getStudent().getId())
+                .studentName(submission.getStudent().getRealName())
+                .totalScore(submission.getTotalScore())
+                .maxScore(submission.getAssignment().getTotalScore())
+                .feedback(submission.getTeacherFeedback())
+                .status(submission.getStatus().name())
+                .questions(questionDetails)
+                .build();
+    }
+}

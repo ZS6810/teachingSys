@@ -1,6 +1,7 @@
 package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
+import com.teach.teachingsys.dto.SubmissionDetailResponse;
 import com.teach.teachingsys.entity.AssignmentSubmission;
 import com.teach.teachingsys.service.AssignmentSubmissionBusinessService;
 import jakarta.servlet.http.HttpSession;
@@ -100,6 +101,21 @@ public class AssignmentSubmissionBusinessController {
             @PathVariable Long assignmentId) {
         List<AssignmentSubmission> submissions = submissionBusinessService.getAssignmentSubmissions(assignmentId);
         return ResponseEntity.ok(ApiResponse.success(submissions));
+    }
+
+    /**
+     * 获取作业提交详情（教师批改用）
+     */
+    @GetMapping("/{submissionId}/detail")
+    public ResponseEntity<ApiResponse<SubmissionDetailResponse>> getSubmissionDetail(
+            @PathVariable Long submissionId) {
+        try {
+            SubmissionDetailResponse detail = submissionBusinessService.getSubmissionDetail(submissionId);
+            return ResponseEntity.ok(ApiResponse.success(detail));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(e.getMessage()));
+        }
     }
 }
 

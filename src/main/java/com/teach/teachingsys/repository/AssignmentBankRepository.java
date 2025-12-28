@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface AssignmentBankRepository extends JpaRepository<AssignmentBank, Long> {
-    @Query("SELECT ab FROM AssignmentBank ab WHERE ab.assignment.id = :assignmentId")
+    @Query("SELECT ab FROM AssignmentBank ab WHERE ab.assignment.id = :assignmentId ORDER BY ab.questionOrder ASC")
     List<AssignmentBank> findByAssignmentId(@Param("assignmentId") Long assignmentId);
     
     @Query("SELECT ab FROM AssignmentBank ab WHERE ab.question.id = :questionId")

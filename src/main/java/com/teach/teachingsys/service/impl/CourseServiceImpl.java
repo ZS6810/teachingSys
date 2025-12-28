@@ -6,6 +6,8 @@ import com.teach.teachingsys.repository.CourseRepository;
 import com.teach.teachingsys.repository.UserRepository;
 import com.teach.teachingsys.service.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "course", key = "#result.id")
     public Course save(Course course) {
         // 1. 获取完整的教师信息
         User teacher = userRepository.findById(course.getTeacher().getId())
@@ -39,6 +42,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "course", key = "#id", unless = "#result == null")
     public Optional<Course> findById(Long id) {
         return courseRepository.findById(id);
     }
@@ -56,11 +60,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "course", key = "#id")
     public void deleteById(Long id) {
         courseRepository.deleteById(id);
     }
 
     @Override
+    @CacheEvict(cacheNames = "course", key = "#result.id")
     public Course update(Course course) {
         return courseRepository.save(course);
     }

@@ -4,6 +4,8 @@ import com.teach.teachingsys.entity.Exam;
 import com.teach.teachingsys.repository.ExamRepository;
 import com.teach.teachingsys.service.ExamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,14 @@ public class ExamServiceImpl implements ExamService {
     private final ExamRepository examRepository;
 
     @Override
+    @CacheEvict(cacheNames = "exam", key = "#result.id")
     public Exam save(Exam exam) {
         return examRepository.save(exam);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "exam", key = "#id", unless = "#result == null")
     public Optional<Exam> findById(Long id) {
         return examRepository.findById(id);
     }
@@ -42,11 +46,13 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "exam", key = "#id")
     public void deleteById(Long id) {
         examRepository.deleteById(id);
     }
 
     @Override
+    @CacheEvict(cacheNames = "exam", key = "#result.id")
     public Exam update(Exam exam) {
         return examRepository.save(exam);
     }

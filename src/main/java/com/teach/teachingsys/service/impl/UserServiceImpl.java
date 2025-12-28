@@ -4,6 +4,8 @@ import com.teach.teachingsys.entity.User;
 import com.teach.teachingsys.repository.UserRepository;
 import com.teach.teachingsys.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @CacheEvict(cacheNames = "user", key = "#result.id")
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "user", key = "#id", unless = "#result == null")
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
@@ -60,11 +64,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "user", key = "#id")
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
+    @CacheEvict(cacheNames = "user", key = "#result.id")
     public User update(User user) {
         return userRepository.save(user);
     }
