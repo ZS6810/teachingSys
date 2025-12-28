@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -26,6 +27,7 @@ public class AssignmentSubmissionBusinessControllerTest {
     private AssignmentSubmissionBusinessService submissionBusinessService;
 
     @Test
+    @WithMockUser
     public void getSubmissionDetail_ShouldReturnSuccess() throws Exception {
         SubmissionDetailResponse mockResponse = SubmissionDetailResponse.builder()
                 .submissionId(1L)
@@ -36,6 +38,7 @@ public class AssignmentSubmissionBusinessControllerTest {
         given(submissionBusinessService.getSubmissionDetail(anyLong())).willReturn(mockResponse);
 
         mockMvc.perform(get("/api/assignment-submissions/business/1/detail")
+                .sessionAttr("userId", 1L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))

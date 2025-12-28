@@ -4,6 +4,7 @@ import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.User;
 import com.teach.teachingsys.entity.UserCourse;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseStatus;
+import com.teach.teachingsys.graph.service.GraphRecommendationService;
 import com.teach.teachingsys.repository.CourseRepository;
 import com.teach.teachingsys.repository.UserCourseRepository;
 import com.teach.teachingsys.repository.UserRepository;
@@ -22,6 +23,7 @@ public class CourseEnrollmentService {
     private final UserCourseRepository userCourseRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final GraphRecommendationService graphRecommendationService;
 
     /**
      * 学生报名课程
@@ -52,6 +54,8 @@ public class CourseEnrollmentService {
         userCourse.setStatus(UserCourse.CourseStudyStatus.active);
         
         userCourse = userCourseRepository.save(userCourse);
+
+        graphRecommendationService.syncEnrollment(userId, courseId);
         
         // 更新课程的报名人数
         course.setTotalStudents(course.getTotalStudents() + 1);
