@@ -15,6 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,8 +26,10 @@ import java.time.LocalDateTime;
 @Table(name = "assignment_submission", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"assignment_id", "user_id", "attempt_number"}, name = "uk_assignment_user_attempt")
 })
+@SQLDelete(sql = "UPDATE assignment_submission SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class AssignmentSubmission {
+public class AssignmentSubmission extends BaseEntity {
 
     public enum SubmissionStatus {
         submitted, graded, returned

@@ -3,6 +3,8 @@ package com.teach.teachingsys.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,8 +14,10 @@ import java.time.LocalDateTime;
 @Table(name = "user_course", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "course_id"}, name = "uk_user_course")
 })
+@SQLDelete(sql = "UPDATE user_course SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class UserCourse {
+public class UserCourse extends BaseEntity {
 
     public enum CourseStudyStatus {
         active, completed, dropped

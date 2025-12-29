@@ -13,15 +13,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "chapter")
+@SQLDelete(sql = "UPDATE chapter SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Chapter {
+public class Chapter extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

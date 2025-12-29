@@ -13,14 +13,18 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Data
 @Entity
 @Table(name = "choice_question", uniqueConstraints = {
         @UniqueConstraint(columnNames = "question_id", name = "uk_question")
 })
+@SQLDelete(sql = "UPDATE choice_question SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ChoiceQuestion {
+public class ChoiceQuestion extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

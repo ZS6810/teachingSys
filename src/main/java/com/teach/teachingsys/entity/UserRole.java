@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -29,8 +31,10 @@ import java.time.LocalDateTime;
         @Index(name = "idx_user_role_user", columnList = "user_id"),
         @Index(name = "role_id", columnList = "role_id")
     })
+@SQLDelete(sql = "UPDATE user_role SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class UserRole {
+public class UserRole extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

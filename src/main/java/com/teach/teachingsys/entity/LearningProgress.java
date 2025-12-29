@@ -17,6 +17,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,8 +29,10 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"user_id", "chapter_id"}, name = "uk_user_chapter"),
         @UniqueConstraint(columnNames = {"user_id", "material_id"}, name = "uk_user_material")
 })
+@SQLDelete(sql = "UPDATE learningprogress SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class LearningProgress {
+public class LearningProgress extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

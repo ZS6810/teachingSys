@@ -17,7 +17,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -26,8 +28,10 @@ import java.time.LocalDateTime;
 @Table(name = "comment", uniqueConstraints = {
         @UniqueConstraint(columnNames = "id", name = "PRIMARY")
 })
+@SQLDelete(sql = "UPDATE comment SET is_deleted = 1, deleted_time = NOW() WHERE id = ?")
+@Where(clause = "is_deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
