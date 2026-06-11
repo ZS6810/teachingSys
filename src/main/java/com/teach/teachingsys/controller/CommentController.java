@@ -36,7 +36,6 @@ public class CommentController {
     public ResponseEntity<List<Comment>> getByPostId(@PathVariable Long postId) {
         return ResponseEntity.ok(commentService.findByPostId(postId));
     }
-
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Comment>> getByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(commentService.findByUserId(userId));
