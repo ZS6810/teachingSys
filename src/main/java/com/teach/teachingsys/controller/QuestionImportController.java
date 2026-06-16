@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.dto.ImportQuestionsRequest;
 import com.teach.teachingsys.dto.ImportQuestionsResponse;
-import com.teach.teachingsys.service.QuestionImportService;
+import com.teach.teachingsys.service.impl.QuestionImportService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

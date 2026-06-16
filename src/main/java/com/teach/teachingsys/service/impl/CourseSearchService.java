@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseLevel;
@@ -42,9 +42,9 @@ public class CourseSearchService {
 
             // 关键词搜索（课程名称或描述）
             if (keyword != null && !keyword.trim().isEmpty()) {
-                Predicate namePredicate = cb.like(cb.lower(root.get("courseName")), 
+                Predicate namePredicate = cb.like(cb.lower(root.get("courseName")),
                         "%" + keyword.toLowerCase() + "%");
-                Predicate descPredicate = cb.like(cb.lower(root.get("description")), 
+                Predicate descPredicate = cb.like(cb.lower(root.get("description")),
                         "%" + keyword.toLowerCase() + "%");
                 predicates.add(cb.or(namePredicate, descPredicate));
             }
@@ -112,4 +112,3 @@ public class CourseSearchService {
         return courseRepository.findAll(spec, pageable);
     }
 }
-

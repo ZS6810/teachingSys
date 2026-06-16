@@ -1,7 +1,7 @@
 package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
-import com.teach.teachingsys.service.FileUploadService;
+import com.teach.teachingsys.service.impl.FileUploadService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

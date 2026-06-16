@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.Chapter;
 import com.teach.teachingsys.entity.Course;
@@ -41,17 +41,17 @@ public class LearningProgressBusinessService {
     /**
      * 更新章节学习进度
      */
-    public LearningProgress updateChapterProgress(Long userId, Long courseId, Long chapterId, 
+    public LearningProgress updateChapterProgress(Long userId, Long courseId, Long chapterId,
                                                    BigDecimal completionPercentage) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() -> new RuntimeException("章节不存在"));
-        
+
         LearningProgress progress = learningProgressRepository.findByUserIdAndChapterId(userId, chapterId)
                 .orElseGet(() -> {
                     LearningProgress newProgress = new LearningProgress();
@@ -61,19 +61,19 @@ public class LearningProgressBusinessService {
                     newProgress.setStatus(LearningStatus.in_progress);
                     return newProgress;
                 });
-        
+
         progress.setChapter(chapter);
         progress.setChapterName(chapter.getChapterName());
         progress.setCompletionPercentage(completionPercentage);
         progress.setLastStudiedTime(LocalDateTime.now());
-        
+
         if (completionPercentage.compareTo(BigDecimal.valueOf(100)) >= 0) {
             progress.setStatus(LearningStatus.completed);
             progress.setCompletedTime(LocalDateTime.now());
         } else if (completionPercentage.compareTo(BigDecimal.ZERO) > 0) {
             progress.setStatus(LearningStatus.in_progress);
         }
-        
+
         LearningProgress savedProgress = learningProgressRepository.save(progress);
         updateCourseProgress(userId, courseId);
         return savedProgress;
@@ -86,10 +86,10 @@ public class LearningProgressBusinessService {
                                                      Integer watchTime, Integer totalTime) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         LearningProgress progress = learningProgressRepository.findByUserIdAndMaterialId(userId, materialId)
                 .orElseGet(() -> {
                     LearningProgress newProgress = new LearningProgress();
@@ -99,29 +99,29 @@ public class LearningProgressBusinessService {
                     newProgress.setStatus(LearningStatus.in_progress);
                     return newProgress;
                 });
-        
+
         CourseMaterial material = courseMaterialRepository.findById(materialId)
                 .orElseThrow(() -> new RuntimeException("资料不存在"));
-        
+
         progress.setMaterial(material);
         progress.setMaterialName(material.getMaterialName());
         progress.setMaterialType(material.getMaterialType());
         progress.setVideoWatchTime(watchTime);
         progress.setTotalVideoTime(totalTime);
         progress.setLastStudiedTime(LocalDateTime.now());
-        
+
         if (totalTime > 0) {
             BigDecimal percentage = BigDecimal.valueOf(watchTime)
                     .divide(BigDecimal.valueOf(totalTime), 2, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100));
             progress.setCompletionPercentage(percentage);
-            
+
             if (percentage.compareTo(BigDecimal.valueOf(90)) >= 0) { // 观看90%以上视为完成
                 progress.setStatus(LearningStatus.completed);
                 progress.setCompletedTime(LocalDateTime.now());
             }
         }
-        
+
         LearningProgress savedProgress = learningProgressRepository.save(progress);
         updateCourseProgress(userId, courseId);
         return savedProgress;
@@ -162,4 +162,3 @@ public class LearningProgressBusinessService {
         });
     }
 }
-

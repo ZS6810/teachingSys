@@ -1,7 +1,7 @@
 package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
-import com.teach.teachingsys.service.StatisticsService;
+import com.teach.teachingsys.service.impl.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;

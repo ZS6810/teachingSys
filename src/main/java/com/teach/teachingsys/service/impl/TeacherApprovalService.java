@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.User;
 import com.teach.teachingsys.entity.enums.UserEnums.UserStatus;
@@ -33,11 +33,11 @@ public class TeacherApprovalService {
     public User approveTeacher(Long teacherId) {
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("教师不存在"));
-        
+
         if (teacher.getUserType() != com.teach.teachingsys.entity.enums.UserEnums.UserType.teacher) {
             throw new RuntimeException("该用户不是教师");
         }
-        
+
         teacher.setStatus(UserStatus.active);
         return userRepository.save(teacher);
     }
@@ -48,13 +48,12 @@ public class TeacherApprovalService {
     public User rejectTeacher(Long teacherId) {
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("教师不存在"));
-        
+
         if (teacher.getUserType() != com.teach.teachingsys.entity.enums.UserEnums.UserType.teacher) {
             throw new RuntimeException("该用户不是教师");
         }
-        
+
         teacher.setStatus(UserStatus.inactive);
         return userRepository.save(teacher);
     }
 }
-

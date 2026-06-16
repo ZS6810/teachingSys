@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,10 +74,10 @@ public class FileUploadService {
             if (fileUrl == null || !fileUrl.startsWith("/uploads/")) {
                 return false;
             }
-            
+
             String filePath = uploadPath + fileUrl.substring("/uploads".length());
             Path path = Paths.get(filePath);
-            
+
             if (Files.exists(path)) {
                 Files.delete(path);
                 log.info("文件删除成功: {}", filePath);
@@ -98,10 +98,10 @@ public class FileUploadService {
             if (fileUrl == null || !fileUrl.startsWith("/uploads/")) {
                 return 0;
             }
-            
+
             String filePath = uploadPath + fileUrl.substring("/uploads".length());
             Path path = Paths.get(filePath);
-            
+
             if (Files.exists(path)) {
                 return Files.size(path);
             }
@@ -112,4 +112,3 @@ public class FileUploadService {
         }
     }
 }
-

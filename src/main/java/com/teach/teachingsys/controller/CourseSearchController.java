@@ -4,7 +4,7 @@ import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseLevel;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseStatus;
-import com.teach.teachingsys.service.CourseSearchService;
+import com.teach.teachingsys.service.impl.CourseSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

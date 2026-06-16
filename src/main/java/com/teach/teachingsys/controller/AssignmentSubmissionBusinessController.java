@@ -3,7 +3,7 @@ package com.teach.teachingsys.controller;
 import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.dto.SubmissionDetailResponse;
 import com.teach.teachingsys.entity.AssignmentSubmission;
-import com.teach.teachingsys.service.AssignmentSubmissionBusinessService;
+import com.teach.teachingsys.service.impl.AssignmentSubmissionBusinessService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

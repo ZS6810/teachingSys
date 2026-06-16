@@ -2,7 +2,7 @@ package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.entity.UserCourse;
-import com.teach.teachingsys.service.CourseEnrollmentService;
+import com.teach.teachingsys.service.impl.CourseEnrollmentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

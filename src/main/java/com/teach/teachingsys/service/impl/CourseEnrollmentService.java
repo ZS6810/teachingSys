@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.User;
@@ -32,35 +32,35 @@ public class CourseEnrollmentService {
         // 检查用户是否存在
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
+
         // 检查课程是否存在且已发布
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         if (course.getStatus() != CourseStatus.published) {
             throw new RuntimeException("课程未发布，无法报名");
         }
-        
+
         // 检查是否已报名
         if (userCourseRepository.existsByUserIdAndCourseId(userId, courseId)) {
             throw new RuntimeException("您已经报名了该课程");
         }
-        
+
         // 创建报名记录
         UserCourse userCourse = new UserCourse();
         userCourse.setUser(user);
         userCourse.setCourse(course);
         userCourse.setEnrolledTime(LocalDateTime.now());
         userCourse.setStatus(UserCourse.CourseStudyStatus.active);
-        
+
         userCourse = userCourseRepository.save(userCourse);
 
         graphRecommendationService.syncEnrollment(userId, courseId);
-        
+
         // 更新课程的报名人数
         course.setTotalStudents(course.getTotalStudents() + 1);
         courseRepository.save(course);
-        
+
         return userCourse;
     }
 
@@ -80,4 +80,3 @@ public class CourseEnrollmentService {
         return userCourseRepository.existsByUserIdAndCourseId(userId, courseId);
     }
 }
-

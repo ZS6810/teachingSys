@@ -2,7 +2,7 @@ package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.entity.LearningProgress;
-import com.teach.teachingsys.service.LearningProgressBusinessService;
+import com.teach.teachingsys.service.impl.LearningProgressBusinessService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

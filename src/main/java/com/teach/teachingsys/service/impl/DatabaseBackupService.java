@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class DatabaseBackupService {
 
     public String exportDatabase() {
         StringBuilder sql = new StringBuilder();
-        
+
         // 1. Disable Foreign Key Checks
         sql.append("/*\n");
         sql.append(" * Database Backup\n");
@@ -35,7 +35,7 @@ public class DatabaseBackupService {
             for (String tableName : tables) {
                 // 3. Export Structure (DDL)
                 exportTableStructure(tableName, sql);
-                
+
                 // 4. Export Data (DML)
                 exportTableData(tableName, sql);
             }
@@ -47,7 +47,7 @@ public class DatabaseBackupService {
 
         // 5. Re-enable Foreign Key Checks
         sql.append("\nSET FOREIGN_KEY_CHECKS = 1;\n");
-        
+
         return sql.toString();
     }
 
@@ -55,9 +55,9 @@ public class DatabaseBackupService {
         sql.append("-- ----------------------------\n");
         sql.append("-- Table structure for ").append(tableName).append("\n");
         sql.append("-- ----------------------------\n");
-        
+
         sql.append("DROP TABLE IF EXISTS `").append(tableName).append("`;\n");
-        
+
         jdbcTemplate.query("SHOW CREATE TABLE `" + tableName + "`", (ResultSetExtractor<Void>) rs -> {
             if (rs.next()) {
                 String createTableSql = rs.getString(2);
@@ -78,7 +78,7 @@ public class DatabaseBackupService {
 
             while (rs.next()) {
                 sql.append("INSERT INTO `").append(tableName).append("` VALUES (");
-                
+
                 for (int i = 1; i <= columnCount; i++) {
                     Object value = rs.getObject(i);
                     if (value == null) {
@@ -90,10 +90,10 @@ public class DatabaseBackupService {
                         strValue = strValue.replace("'", "\\'");   // Single quote
                         strValue = strValue.replace("\r", "\\r");
                         strValue = strValue.replace("\n", "\\n");
-                        
+
                         sql.append("'").append(strValue).append("'");
                     }
-                    
+
                     if (i < columnCount) {
                         sql.append(", ");
                     }

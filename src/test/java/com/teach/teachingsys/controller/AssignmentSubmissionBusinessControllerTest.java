@@ -2,7 +2,7 @@ package com.teach.teachingsys.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teach.teachingsys.dto.SubmissionDetailResponse;
-import com.teach.teachingsys.service.AssignmentSubmissionBusinessService;
+import com.teach.teachingsys.service.impl.AssignmentSubmissionBusinessService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

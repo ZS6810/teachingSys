@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,34 +50,34 @@ public class AssignmentSubmissionBusinessService {
     public AssignmentSubmission submitAssignment(Long assignmentId, Long userId, String submissionData) {
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new RuntimeException("作业不存在"));
-        
+
         if (assignment.getStatus() != AssignmentStatus.published) {
             throw new RuntimeException("作业未发布，无法提交");
         }
-        
+
         // 检查截止时间
         if (assignment.getDeadline() != null && LocalDateTime.now().isAfter(assignment.getDeadline())) {
             throw new RuntimeException("作业已过期，无法提交");
         }
-        
+
         // 获取当前尝试次数
         List<AssignmentSubmission> existingSubmissions = submissionRepository.findByAssignmentIdAndUserId(assignmentId, userId);
         int attemptNumber = existingSubmissions.size() + 1;
-        
+
         // 检查最大尝试次数
         if (assignment.getMaxAttempts() != null && attemptNumber > assignment.getMaxAttempts()) {
             throw new RuntimeException("已达到最大尝试次数");
         }
-        
+
         // 检查是否已存在相同尝试次数的提交
         submissionRepository.findByAssignmentIdAndUserIdAndAttemptNumber(assignmentId, userId, attemptNumber)
                 .ifPresent(s -> {
                     throw new RuntimeException("该尝试次数的提交已存在");
                 });
-        
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
+
         // 创建提交记录
         AssignmentSubmission submission = new AssignmentSubmission();
         submission.setAssignment(assignment);
@@ -86,48 +86,48 @@ public class AssignmentSubmissionBusinessService {
         submission.setSubmittedTime(LocalDateTime.now());
         submission.setSubmissionData(submissionData);
         submission.setStatus(AssignmentSubmission.SubmissionStatus.submitted);
-        
+
         submission = submissionRepository.save(submission);
-        
+
         // 更新作业的提交次数
         assignment.setSubmissionCount(assignment.getSubmissionCount() + 1);
         assignmentRepository.save(assignment);
-        
+
         return submission;
     }
 
     /**
      * 批改作业
      */
-    public AssignmentSubmission gradeAssignment(Long submissionId, Long graderId, 
-                                                 java.math.BigDecimal totalScore, 
+    public AssignmentSubmission gradeAssignment(Long submissionId, Long graderId,
+                                                 java.math.BigDecimal totalScore,
                                                  java.math.BigDecimal autoGradedScore,
                                                  String feedback) {
         AssignmentSubmission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new RuntimeException("提交记录不存在"));
-        
+
         User grader = userRepository.findById(graderId)
                 .orElseThrow(() -> new RuntimeException("批改人不存在"));
-        
+
         submission.setGrader(grader);
         submission.setTotalScore(totalScore);
         submission.setAutoGradedScore(autoGradedScore);
         submission.setTeacherFeedback(feedback);
         submission.setGradedTime(LocalDateTime.now());
         submission.setStatus(AssignmentSubmission.SubmissionStatus.graded);
-        
+
         submission = submissionRepository.save(submission);
-        
+
         // 更新作业统计信息
         Assignment assignment = submission.getAssignment();
         assignment.setGradedCount(assignment.getGradedCount() + 1);
-        
+
         // 更新平均分、最高分、最低分
         List<AssignmentSubmission> gradedSubmissions = submissionRepository.findByAssignmentId(assignment.getId())
                 .stream()
                 .filter(s -> s.getTotalScore() != null)
                 .toList();
-        
+
         if (!gradedSubmissions.isEmpty()) {
             double avg = gradedSubmissions.stream()
                     .mapToDouble(s -> s.getTotalScore().doubleValue())
@@ -141,14 +141,14 @@ public class AssignmentSubmissionBusinessService {
                     .mapToDouble(s -> s.getTotalScore().doubleValue())
                     .min()
                     .orElse(0.0);
-            
+
             assignment.setAverageScore(java.math.BigDecimal.valueOf(avg));
             assignment.setHighestScore(java.math.BigDecimal.valueOf(max));
             assignment.setLowestScore(java.math.BigDecimal.valueOf(min));
         }
-        
+
         assignmentRepository.save(assignment);
-        
+
         return submission;
     }
 

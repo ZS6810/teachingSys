@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.Assignment;
 import com.teach.teachingsys.entity.AssignmentSubmission;
@@ -34,7 +34,7 @@ public class StatisticsService {
      */
     public Map<String, Object> getCourseEnrollmentStats(Long courseId) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         if (courseId != null) {
             Course course = courseRepository.findById(courseId).orElse(null);
             if (course != null) {
@@ -51,7 +51,7 @@ public class StatisticsService {
             stats.put("totalCourses", courses.size());
             stats.put("totalEnrollments", totalEnrollments);
         }
-        
+
         return stats;
     }
 
@@ -60,14 +60,14 @@ public class StatisticsService {
      */
     public Map<String, Object> getCourseRevenueStats(Long courseId, LocalDateTime startDate, LocalDateTime endDate) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         List<UserCourse> enrollments;
         if (courseId != null) {
             enrollments = userCourseRepository.findByCourseId(courseId);
         } else {
             enrollments = userCourseRepository.findAll();
         }
-        
+
         // 过滤日期范围
         if (startDate != null || endDate != null) {
             enrollments = enrollments.stream()
@@ -79,14 +79,14 @@ public class StatisticsService {
                     })
                     .toList();
         }
-        
+
         BigDecimal totalRevenue = enrollments.stream()
                 .map(uc -> uc.getCourse().getPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         stats.put("totalEnrollments", enrollments.size());
         stats.put("totalRevenue", totalRevenue);
-        
+
         if (courseId != null) {
             Course course = courseRepository.findById(courseId).orElse(null);
             if (course != null) {
@@ -94,7 +94,7 @@ public class StatisticsService {
                 stats.put("coursePrice", course.getPrice());
             }
         }
-        
+
         return stats;
     }
 
@@ -103,7 +103,7 @@ public class StatisticsService {
      */
     public Map<String, Object> getStudentLearningStats(Long studentId, Long courseId) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         List<UserCourse> userCourses;
         if (studentId != null && courseId != null) {
             userCourses = userCourseRepository.findByUserIdAndCourseId(studentId, courseId)
@@ -116,21 +116,21 @@ public class StatisticsService {
         } else {
             userCourses = userCourseRepository.findAll();
         }
-        
+
         long totalCourses = userCourses.size();
         long completedCourses = userCourses.stream()
                 .filter(uc -> uc.getStatus() == com.teach.teachingsys.entity.UserCourse.CourseStudyStatus.completed)
                 .count();
-        
+
         double avgProgress = userCourses.stream()
                 .mapToDouble(uc -> uc.getProgressRate().doubleValue())
                 .average()
                 .orElse(0.0);
-        
+
         stats.put("totalCourses", totalCourses);
         stats.put("completedCourses", completedCourses);
         stats.put("averageProgress", BigDecimal.valueOf(avgProgress).setScale(2, RoundingMode.HALF_UP));
-        
+
         return stats;
     }
 
@@ -139,38 +139,38 @@ public class StatisticsService {
      */
     public Map<String, Object> getAssignmentScoreStats(Long assignmentId) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
         if (assignment == null) {
             return stats;
         }
-        
+
         List<AssignmentSubmission> submissions = assignmentSubmissionRepository.findByAssignmentId(assignmentId);
         List<AssignmentSubmission> gradedSubmissions = submissions.stream()
                 .filter(s -> s.getTotalScore() != null)
                 .toList();
-        
+
         if (!gradedSubmissions.isEmpty()) {
             double avgScore = gradedSubmissions.stream()
                     .mapToDouble(s -> s.getTotalScore().doubleValue())
                     .average()
                     .orElse(0.0);
-            
+
             double maxScore = gradedSubmissions.stream()
                     .mapToDouble(s -> s.getTotalScore().doubleValue())
                     .max()
                     .orElse(0.0);
-            
+
             double minScore = gradedSubmissions.stream()
                     .mapToDouble(s -> s.getTotalScore().doubleValue())
                     .min()
                     .orElse(0.0);
-            
+
             long passCount = gradedSubmissions.stream()
                     .filter(s -> assignment.getPassingScore() != null &&
                             s.getTotalScore().compareTo(assignment.getPassingScore()) >= 0)
                     .count();
-            
+
             stats.put("assignmentId", assignmentId);
             stats.put("assignmentTitle", assignment.getTitle());
             stats.put("totalSubmissions", submissions.size());
@@ -186,7 +186,7 @@ public class StatisticsService {
             stats.put("totalSubmissions", submissions.size());
             stats.put("gradedSubmissions", 0);
         }
-        
+
         return stats;
     }
 
@@ -195,27 +195,27 @@ public class StatisticsService {
      */
     public Map<String, Object> getCourseComprehensiveStats(Long courseId) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) {
             return stats;
         }
-        
+
         // 报名统计
         long enrollmentCount = userCourseRepository.findByCourseId(courseId).size();
-        
+
         // 作业统计
         List<Assignment> assignments = assignmentRepository.findByCourseId(courseId);
         long totalAssignments = assignments.size();
         long totalSubmissions = assignments.stream()
                 .mapToLong(a -> assignmentSubmissionRepository.findByAssignmentId(a.getId()).size())
                 .sum();
-        
+
         // 收入统计
         BigDecimal totalRevenue = userCourseRepository.findByCourseId(courseId).stream()
                 .map(uc -> course.getPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         stats.put("courseId", courseId);
         stats.put("courseName", course.getCourseName());
         stats.put("enrollmentCount", enrollmentCount);
@@ -224,8 +224,7 @@ public class StatisticsService {
         stats.put("totalRevenue", totalRevenue);
         stats.put("averageRating", course.getAverageRating());
         stats.put("reviewCount", course.getReviewCount());
-        
+
         return stats;
     }
 }
-

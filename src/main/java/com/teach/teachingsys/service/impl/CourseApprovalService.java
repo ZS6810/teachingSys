@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.entity.Course;
 import com.teach.teachingsys.entity.enums.CourseEnums.CourseStatus;
@@ -23,7 +23,7 @@ public class CourseApprovalService {
     public Course submitForApproval(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         course.setStatus(CourseStatus.pending);
         return courseRepository.save(course);
     }
@@ -34,7 +34,7 @@ public class CourseApprovalService {
     public Course approveCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         course.setStatus(CourseStatus.approved);
         course.setApprovalTime(LocalDateTime.now());
         return courseRepository.save(course);
@@ -46,11 +46,11 @@ public class CourseApprovalService {
     public Course publishCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         if (course.getStatus() != CourseStatus.approved) {
             throw new RuntimeException("课程必须先通过审核才能发布");
         }
-        
+
         course.setStatus(CourseStatus.published);
         return courseRepository.save(course);
     }
@@ -61,7 +61,7 @@ public class CourseApprovalService {
     public Course rejectCourse(Long courseId, String reason) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("课程不存在"));
-        
+
         course.setStatus(CourseStatus.rejected);
         course.setRejectionReason(reason);
         return courseRepository.save(course);
@@ -77,4 +77,3 @@ public class CourseApprovalService {
                 .toList();
     }
 }
-

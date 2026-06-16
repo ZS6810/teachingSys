@@ -5,7 +5,7 @@ import com.teach.teachingsys.dto.AuthResponse;
 import com.teach.teachingsys.dto.LoginRequest;
 import com.teach.teachingsys.dto.RegisterRequest;
 import com.teach.teachingsys.entity.User;
-import com.teach.teachingsys.service.AuthService;
+import com.teach.teachingsys.service.impl.AuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

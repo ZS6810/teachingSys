@@ -1,6 +1,6 @@
 package com.teach.teachingsys.controller;
 
-import com.teach.teachingsys.service.DatabaseBackupService;
+import com.teach.teachingsys.service.impl.DatabaseBackupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;

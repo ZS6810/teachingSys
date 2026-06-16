@@ -2,7 +2,7 @@ package com.teach.teachingsys.controller;
 
 import com.teach.teachingsys.dto.ApiResponse;
 import com.teach.teachingsys.entity.User;
-import com.teach.teachingsys.service.TeacherApprovalService;
+import com.teach.teachingsys.service.impl.TeacherApprovalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

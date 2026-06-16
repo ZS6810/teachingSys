@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.dto.ImportQuestionsResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,4 +53,3 @@ public class QuestionImportService {
         return Integer.parseInt(value.toString());
     }
 }
-

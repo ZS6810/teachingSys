@@ -1,4 +1,4 @@
-package com.teach.teachingsys.service;
+package com.teach.teachingsys.service.impl;
 
 import com.teach.teachingsys.dto.AuthResponse;
 import com.teach.teachingsys.dto.LoginRequest;
@@ -36,12 +36,12 @@ public class AuthService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("用户名已存在");
         }
-        
+
         // 检查邮箱是否已存在
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("邮箱已被注册");
         }
-        
+
         // 创建用户
         User user = new User();
         user.setUsername(request.getUsername());
@@ -50,7 +50,7 @@ public class AuthService {
         user.setRealName(request.getRealName());
         user.setPhone(request.getPhone());
         user.setUserType(request.getUserType());
-        
+
         // 根据用户类型设置状态
         if (request.getUserType() == UserType.teacher) {
             user.setStatus(UserStatus.pending); // 教师需要审核
@@ -58,12 +58,12 @@ public class AuthService {
         } else {
             user.setStatus(UserStatus.active); // 学生直接激活
         }
-        
+
         user = userRepository.save(user);
-        
+
         // 分配默认角色
         assignDefaultRole(user, request.getUserType());
-        
+
         return buildAuthResponse(user);
     }
 
@@ -74,21 +74,21 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
-        
+
         // 验证密码
         if (!PasswordUtil.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("用户名或密码错误");
         }
-        
+
         // 检查用户状态
         if (user.getStatus() == UserStatus.inactive) {
             throw new RuntimeException("账户已被禁用，请联系管理员");
         }
-        
+
         // 更新最后登录时间
         user.setLastLoginTime(LocalDateTime.now());
         userRepository.save(user);
-        
+
         return buildAuthResponse(user);
     }
 
@@ -101,7 +101,7 @@ public class AuthService {
             case teacher -> "TEACHER";
             case admin -> "ADMIN";
         };
-        
+
         roleRepository.findByRoleCode(roleCode).ifPresent(role -> {
             UserRole userRole = new UserRole();
             userRole.setUser(user);
@@ -118,7 +118,7 @@ public class AuthService {
                 .stream()
                 .map(ur -> ur.getRole().getRoleCode())
                 .collect(Collectors.toList());
-        
+
         return AuthResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
@@ -141,4 +141,3 @@ public class AuthService {
         return user;
     }
 }
-
